@@ -299,8 +299,8 @@ class _DrawingBoardState extends State<DrawingBoard> {
         builder: (_, DrawConfig dc, ___) {
           final Type currType = dc.contentType;
 
-          return Row(
-            children: (widget.defaultToolsBuilder?.call(currType, _controller))!.toList(),
+          return Column(
+            children: ((widget.defaultToolsBuilder?.call(currType, _controller))?? []).toList(),
           );
         },
       ),
