@@ -319,9 +319,14 @@ class DrawingController {
     _refreshDeep();
   }
 
-  bool hasAnyLines() {
-    return _history.any((PaintContent element) => element is SimpleLine);
-  }
+  bool get hasAnyLines => _history.any((PaintContent element) => element is SimpleLine);
+
+  bool get canErase => hasAnyLines;
+
+  bool get canUndo => _currentIndex > 0;
+
+  bool get canRedo => _currentIndex < _history.length;
+
 
   /// 撤销
   void undo() {
