@@ -166,12 +166,7 @@ class _DrawingBoardState extends State<DrawingBoard> {
         children: <Widget>[
           Expanded(child: content),
           if (widget.showDefaultTools)
-            Positioned(
-                left: widget.left,
-                right: widget.right,
-                top: widget.top,
-                bottom: widget.bottom,
-                child: _buildDefaultTools),
+            _buildDefaultTools,
           // if (widget.showDefaultActions) _buildDefaultActions,
         ],
       );
@@ -298,23 +293,16 @@ class _DrawingBoardState extends State<DrawingBoard> {
       right: widget.right,
       top: widget.top,
       bottom: widget.bottom,
-      child: Material(
-        color: Colors.white,
-        child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          padding: EdgeInsets.zero,
-          child: ExValueBuilder<DrawConfig>(
-            valueListenable: _controller.drawConfig,
-            shouldRebuild: (DrawConfig p, DrawConfig n) => p.contentType != n.contentType,
-            builder: (_, DrawConfig dc, ___) {
-              final Type currType = dc.contentType;
+      child: ExValueBuilder<DrawConfig>(
+        valueListenable: _controller.drawConfig,
+        shouldRebuild: (DrawConfig p, DrawConfig n) => p.contentType != n.contentType,
+        builder: (_, DrawConfig dc, ___) {
+          final Type currType = dc.contentType;
 
-              return Row(
-                children: (widget.defaultToolsBuilder?.call(currType, _controller))!.toList(),
-              );
-            },
-          ),
-        ),
+          return Row(
+            children: (widget.defaultToolsBuilder?.call(currType, _controller))!.toList(),
+          );
+        },
       ),
     );
   }
