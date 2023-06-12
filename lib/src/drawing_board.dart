@@ -16,7 +16,7 @@ import 'paint_contents/straight_line.dart';
 import 'painter.dart';
 
 /// 默认工具栏构建器
-typedef DefaultToolsBuilder = List<DefToolItem> Function(
+typedef DefaultToolsBuilder = List<Widget> Function(
   Type currType,
   DrawingController controller,
 );
@@ -215,11 +215,7 @@ class _DrawingBoardState extends State<DrawingBoard> {
         child: Center(
           child: Stack(
             alignment: Alignment.center,
-            children: <Widget>[
-              _buildImage,
-              _buildPainter,
-              _buildDefaultTools
-            ],
+            children: <Widget>[_buildImage, _buildPainter, _buildDefaultTools],
           ),
         ),
       ),
@@ -312,12 +308,9 @@ class _DrawingBoardState extends State<DrawingBoard> {
             shouldRebuild: (DrawConfig p, DrawConfig n) => p.contentType != n.contentType,
             builder: (_, DrawConfig dc, ___) {
               final Type currType = dc.contentType;
-    
+
               return Row(
-                children: (widget.defaultToolsBuilder?.call(currType, _controller) ??
-                        DrawingBoard.defaultTools(currType, _controller))
-                    .map((DefToolItem item) => _DefToolItemWidget(item: item))
-                    .toList(),
+                children: (widget.defaultToolsBuilder?.call(currType, _controller))!.toList(),
               );
             },
           ),

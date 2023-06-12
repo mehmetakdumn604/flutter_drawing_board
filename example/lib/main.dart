@@ -233,36 +233,31 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Column(
         children: <Widget>[
-          Expanded(
-            child: LayoutBuilder(
-              builder: (BuildContext context, BoxConstraints constraints) {
-                return DrawingBoard(
-                  // boardPanEnabled: false,
-                  // boardScaleEnabled: false,
-                  controller: _drawingController,
-                  background: Container(
-                    width: constraints.maxWidth,
-                    height: constraints.maxHeight,
-                    color: Colors.white,
-                  ),
-                  showDefaultActions: true,
-                  showDefaultTools: true,
-                  defaultToolsBuilder: (Type t, _) {
-                    return DrawingBoard.defaultTools(t, _drawingController)
-                      ..insert(
-                        1,
-                        DefToolItem(
-                          icon: Icons.change_history_rounded,
-                          isActive: t == Triangle,
-                          onTap: () =>
-                              _drawingController.setPaintContent = Triangle(),
-                        ),
-                      );
-                  },
-                );
-              },
-            ),
-          ),
+          // Expanded(
+          //   child: LayoutBuilder(
+          //     builder: (BuildContext context, BoxConstraints constraints) {
+          //       return DrawingBoard(
+          //         // boardPanEnabled: false,
+          //         // boardScaleEnabled: false,
+          //         controller: _drawingController,
+          //         background: Container(
+          //           width: constraints.maxWidth,
+          //           height: constraints.maxHeight,
+          //           color: Colors.white,
+          //         ),
+          //         showDefaultActions: true,
+          //         showDefaultTools: true,
+          //         defaultToolsBuilder: (Type t, _) {
+          //           return DrawingBoard.defaultTools(t, _drawingController)
+          //             ..insert(
+          //               1,
+          //               SizedBox(),
+          //             );
+          //         },
+          //       );
+          //     },
+          //   ),
+          // ),
           const Padding(
             padding: EdgeInsets.all(8.0),
             child: SelectableText(
