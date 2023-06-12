@@ -215,7 +215,11 @@ class _DrawingBoardState extends State<DrawingBoard> {
         child: Center(
           child: Stack(
             alignment: Alignment.center,
-            children: <Widget>[_buildImage, _buildPainter],
+            children: <Widget>[
+              _buildImage,
+              _buildPainter,
+              _buildDefaultTools
+            ],
           ),
         ),
       ),
@@ -293,24 +297,30 @@ class _DrawingBoardState extends State<DrawingBoard> {
 
   /// 构建默认工具栏
   Widget get _buildDefaultTools {
-    return Material(
-      color: Colors.white,
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        padding: EdgeInsets.zero,
-        child: ExValueBuilder<DrawConfig>(
-          valueListenable: _controller.drawConfig,
-          shouldRebuild: (DrawConfig p, DrawConfig n) => p.contentType != n.contentType,
-          builder: (_, DrawConfig dc, ___) {
-            final Type currType = dc.contentType;
-
-            return Row(
-              children: (widget.defaultToolsBuilder?.call(currType, _controller) ??
-                      DrawingBoard.defaultTools(currType, _controller))
-                  .map((DefToolItem item) => _DefToolItemWidget(item: item))
-                  .toList(),
-            );
-          },
+    return Positioned(
+      left: widget.left,
+      right: widget.right,
+      top: widget.top,
+      bottom: widget.bottom,
+      child: Material(
+        color: Colors.white,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          padding: EdgeInsets.zero,
+          child: ExValueBuilder<DrawConfig>(
+            valueListenable: _controller.drawConfig,
+            shouldRebuild: (DrawConfig p, DrawConfig n) => p.contentType != n.contentType,
+            builder: (_, DrawConfig dc, ___) {
+              final Type currType = dc.contentType;
+    
+              return Row(
+                children: (widget.defaultToolsBuilder?.call(currType, _controller) ??
+                        DrawingBoard.defaultTools(currType, _controller))
+                    .map((DefToolItem item) => _DefToolItemWidget(item: item))
+                    .toList(),
+              );
+            },
+          ),
         ),
       ),
     );
