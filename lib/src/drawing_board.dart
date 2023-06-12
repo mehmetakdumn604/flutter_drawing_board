@@ -48,6 +48,10 @@ class DrawingBoard extends StatefulWidget {
     this.onInteractionUpdate,
     this.transformationController,
     this.alignment = Alignment.topCenter,
+    this.left,
+    this.right,
+    this.top,
+    this.bottom,
   }) : super(key: key);
 
   /// 画板背景控件
@@ -92,10 +96,10 @@ class DrawingBoard extends StatefulWidget {
   final double boardScaleFactor;
   final TransformationController? transformationController;
   final AlignmentGeometry alignment;
+  final double? left, right, top, bottom;
 
   /// 默认工具项列表
-  static List<DefToolItem> defaultTools(
-      Type currType, DrawingController controller) {
+  static List<DefToolItem> defaultTools(Type currType, DrawingController controller) {
     return <DefToolItem>[
       DefToolItem(
           isActive: currType == SimpleLine,
@@ -120,8 +124,7 @@ class DrawingBoard extends StatefulWidget {
       DefToolItem(
           isActive: currType == Eraser,
           icon: CupertinoIcons.bandage,
-          onTap: () =>
-              controller.setPaintContent = Eraser(color: Colors.white)),
+          onTap: () => controller.setPaintContent = Eraser(color: Colors.white)),
     ];
   }
 
@@ -130,8 +133,7 @@ class DrawingBoard extends StatefulWidget {
 }
 
 class _DrawingBoardState extends State<DrawingBoard> {
-  late final DrawingController _controller =
-      widget.controller ?? DrawingController();
+  late final DrawingController _controller = widget.controller ?? DrawingController();
 
   @override
   void dispose() {
@@ -144,8 +146,8 @@ class _DrawingBoardState extends State<DrawingBoard> {
     Widget content = InteractiveViewer(
       maxScale: widget.maxScale,
       minScale: widget.minScale,
-      boundaryMargin: widget.boardBoundaryMargin ??
-          EdgeInsets.all(MediaQuery.of(context).size.width),
+      boundaryMargin:
+          widget.boardBoundaryMargin ?? EdgeInsets.all(MediaQuery.of(context).size.width),
       clipBehavior: widget.boardClipBehavior,
       panAxis: widget.panAxis,
       constrained: widget.boardConstrained,
@@ -160,21 +162,24 @@ class _DrawingBoardState extends State<DrawingBoard> {
     );
 
     if (widget.showDefaultActions || widget.showDefaultTools) {
-      content = Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
+      content = Stack(
         children: <Widget>[
           Expanded(child: content),
-          if (widget.showDefaultActions) _buildDefaultActions,
-          if (widget.showDefaultTools) _buildDefaultTools,
+          if (widget.showDefaultTools)
+            Positioned(
+                left: widget.left,
+                right: widget.right,
+                top: widget.top,
+                bottom: widget.bottom,
+                child: _buildDefaultTools),
+          // if (widget.showDefaultActions) _buildDefaultActions,
         ],
       );
     }
 
     return Listener(
-      onPointerDown: (PointerDownEvent pde) =>
-          _controller.addFingerCount(pde.localPosition),
-      onPointerUp: (PointerUpEvent pue) =>
-          _controller.reduceFingerCount(pue.localPosition),
+      onPointerDown: (PointerDownEvent pde) => _controller.addFingerCount(pde.localPosition),
+      onPointerUp: (PointerUpEvent pue) => _controller.reduceFingerCount(pue.localPosition),
       child: content,
     );
   }
@@ -185,8 +190,7 @@ class _DrawingBoardState extends State<DrawingBoard> {
       key: _controller.painterKey,
       child: ExValueBuilder<DrawConfig>(
         valueListenable: _controller.drawConfig,
-        shouldRebuild: (DrawConfig p, DrawConfig n) =>
-            p.angle != n.angle || p.size != n.size,
+        shouldRebuild: (DrawConfig p, DrawConfig n) => p.angle != n.angle || p.size != n.size,
         builder: (_, DrawConfig dc, Widget? child) {
           Widget c = child!;
 
@@ -259,15 +263,13 @@ class _DrawingBoardState extends State<DrawingBoard> {
               width: 160,
               child: ExValueBuilder<DrawConfig>(
                 valueListenable: _controller.drawConfig,
-                shouldRebuild: (DrawConfig p, DrawConfig n) =>
-                    p.strokeWidth != n.strokeWidth,
+                shouldRebuild: (DrawConfig p, DrawConfig n) => p.strokeWidth != n.strokeWidth,
                 builder: (_, DrawConfig dc, ___) {
                   return Slider(
                     value: dc.strokeWidth,
                     max: 50,
                     min: 1,
-                    onChanged: (double v) =>
-                        _controller.setStyle(strokeWidth: v),
+                    onChanged: (double v) => _controller.setStyle(strokeWidth: v),
                   );
                 },
               ),
@@ -280,11 +282,9 @@ class _DrawingBoardState extends State<DrawingBoard> {
                 icon: const Icon(CupertinoIcons.arrow_turn_up_right),
                 onPressed: () => _controller.redo()),
             IconButton(
-                icon: const Icon(CupertinoIcons.rotate_right),
-                onPressed: () => _controller.turn()),
+                icon: const Icon(CupertinoIcons.rotate_right), onPressed: () => _controller.turn()),
             IconButton(
-                icon: const Icon(CupertinoIcons.trash),
-                onPressed: () => _controller.clear()),
+                icon: const Icon(CupertinoIcons.trash), onPressed: () => _controller.clear()),
           ],
         ),
       ),
@@ -300,17 +300,15 @@ class _DrawingBoardState extends State<DrawingBoard> {
         padding: EdgeInsets.zero,
         child: ExValueBuilder<DrawConfig>(
           valueListenable: _controller.drawConfig,
-          shouldRebuild: (DrawConfig p, DrawConfig n) =>
-              p.contentType != n.contentType,
+          shouldRebuild: (DrawConfig p, DrawConfig n) => p.contentType != n.contentType,
           builder: (_, DrawConfig dc, ___) {
             final Type currType = dc.contentType;
 
             return Row(
-              children:
-                  (widget.defaultToolsBuilder?.call(currType, _controller) ??
-                          DrawingBoard.defaultTools(currType, _controller))
-                      .map((DefToolItem item) => _DefToolItemWidget(item: item))
-                      .toList(),
+              children: (widget.defaultToolsBuilder?.call(currType, _controller) ??
+                      DrawingBoard.defaultTools(currType, _controller))
+                  .map((DefToolItem item) => _DefToolItemWidget(item: item))
+                  .toList(),
             );
           },
         ),
