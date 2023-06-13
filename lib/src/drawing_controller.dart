@@ -135,6 +135,7 @@ class DrawingController {
   DrawingController({
     DrawConfig? config,
     PaintContent? content,
+    GlobalKey? repaintKey,
   }) {
     _history = <PaintContent>[];
     _currentIndex = 0;
@@ -143,13 +144,14 @@ class DrawingController {
     painter = _RePaint();
     drawConfig = SafeValueNotifier<DrawConfig>(config ?? DrawConfig.def(contentType: SimpleLine));
     setPaintContent = content ?? SimpleLine();
+    painterKey = repaintKey ?? GlobalKey();
   }
 
   /// 绘制开始点
   Offset? _startPoint;
 
   /// 画板数据Key
-  late GlobalKey painterKey = GlobalKey();
+  GlobalKey? painterKey;
 
   /// 控制器
   late SafeValueNotifier<DrawConfig> drawConfig;
@@ -319,14 +321,13 @@ class DrawingController {
     _refreshDeep();
   }
 
-  bool get hasAnyLines => _history.any((PaintContent element) => element is SimpleLine);
+  bool get hasAnyLines => getHistory.any((PaintContent element) => element is SimpleLine);
 
   bool get canErase => hasAnyLines;
 
-  bool get canUndo => _currentIndex > 0;
+  bool get canUndo => currentIndex > 0;
 
-  bool get canRedo => _currentIndex < _history.length;
-
+  bool get canRedo => currentIndex < getHistory.length;
 
   /// 撤销
   void undo() {
@@ -355,7 +356,7 @@ class DrawingController {
   Future<ByteData?> getImageData() async {
     try {
       final RenderRepaintBoundary boundary =
-          painterKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+          painterKey?.currentContext!.findRenderObject() as RenderRepaintBoundary;
       final ui.Image image = await boundary.toImage(pixelRatio: ui.window.devicePixelRatio);
       return await image.toByteData(format: ui.ImageByteFormat.png);
     } catch (e) {
