@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
@@ -260,6 +261,7 @@ class DrawingController {
     content.paint = drawConfig.value.paint;
     _paintContent = content;
     drawConfig.value = drawConfig.value.copyWith(contentType: content.runtimeType);
+    log(content.toJson().toString());
   }
 
   /// 添加一条绘制数据
