@@ -359,7 +359,7 @@ class DrawingController {
     try {
       final RenderRepaintBoundary boundary =
           painterKey?.currentContext!.findRenderObject() as RenderRepaintBoundary;
-      final ui.Image image = await boundary.toImage(pixelRatio: ui.window.devicePixelRatio);
+      final ui.Image image = await boundary.toImage(pixelRatio: 1);
       return await image.toByteData(format: ui.ImageByteFormat.png);
     } catch (e) {
       print('获取图片数据出错:$e');
