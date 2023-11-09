@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:example/test_data.dart';
@@ -128,10 +129,11 @@ void main() {
     }
   };
 
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -164,7 +166,7 @@ class _MyHomePageState extends State<MyHomePage> {
     final Uint8List? data =
         (await _drawingController.getImageData())?.buffer.asUint8List();
     if (data == null) {
-      print('获取图片数据失败');
+      log('获取图片数据失败');
       return;
     }
     showDialog<void>(
@@ -231,7 +233,7 @@ class _MyHomePageState extends State<MyHomePage> {
           const SizedBox(width: 40),
         ],
       ),
-      body: Column(
+      body:const Column(
         children: <Widget>[
           // Expanded(
           //   child: LayoutBuilder(
@@ -258,7 +260,7 @@ class _MyHomePageState extends State<MyHomePage> {
           //     },
           //   ),
           // ),
-          const Padding(
+           Padding(
             padding: EdgeInsets.all(8.0),
             child: SelectableText(
               'https://github.com/xSILENCEx/flutter_drawing_board',
